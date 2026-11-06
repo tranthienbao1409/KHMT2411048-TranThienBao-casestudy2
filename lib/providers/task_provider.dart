@@ -13,160 +13,20 @@ class TaskProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<void> loadTasks({String? scope  Future<bool> updateTask(String taskId, Map<String, dynamic> updateData) async {
-    try {
-      final updatedTask = await _taskService.updateTask(taskId, updateData);
-      final index = _tasks.indexWhere((t) => t.id == taskId);
-      if (index != -1) {
-        _tasks[index] = updatedTask;
-        notifyListeners();
-      }
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> deleteTask(String taskId) async {
-    try {
-      await _taskService.deleteTask(taskId);
-      _tasks.removeWhere((t) => t.id == taskId);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-}) async {
+  Future<void> loadTasks({String? scope}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
       _tasks = await _taskService.fetchTasks(scope: scope);
-      Future<bool> updateTask(String taskId, Map<String, dynamic> updateData) async {
-    try {
-      final updatedTask = await _taskService.updateTask(taskId, updateData);
-      final index = _tasks.indexWhere((t) => t.id == taskId);
-      if (index != -1) {
-        _tasks[index] = updatedTask;
-        notifyListeners();
-      }
-      return true;
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> deleteTask(String taskId) async {
-    try {
-      await _taskService.deleteTask(taskId);
-      _tasks.removeWhere((t) => t.id == taskId);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-} catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      Future<bool> updateTask(String taskId, Map<String, dynamic> updateData) async {
-    try {
-      final updatedTask = await _taskService.updateTask(taskId, updateData);
-      final index = _tasks.indexWhere((t) => t.id == taskId);
-      if (index != -1) {
-        _tasks[index] = updatedTask;
-        notifyListeners();
-      }
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> deleteTask(String taskId) async {
-    try {
-      await _taskService.deleteTask(taskId);
-      _tasks.removeWhere((t) => t.id == taskId);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-} finally {
+    } finally {
       _isLoading = false;
       notifyListeners();
-      Future<bool> updateTask(String taskId, Map<String, dynamic> updateData) async {
-    try {
-      final updatedTask = await _taskService.updateTask(taskId, updateData);
-      final index = _tasks.indexWhere((t) => t.id == taskId);
-      if (index != -1) {
-        _tasks[index] = updatedTask;
-        notifyListeners();
-      }
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
     }
   }
-
-  Future<bool> deleteTask(String taskId) async {
-    try {
-      await _taskService.deleteTask(taskId);
-      _tasks.removeWhere((t) => t.id == taskId);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-}
-    Future<bool> updateTask(String taskId, Map<String, dynamic> updateData) async {
-    try {
-      final updatedTask = await _taskService.updateTask(taskId, updateData);
-      final index = _tasks.indexWhere((t) => t.id == taskId);
-      if (index != -1) {
-        _tasks[index] = updatedTask;
-        notifyListeners();
-      }
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> deleteTask(String taskId) async {
-    try {
-      await _taskService.deleteTask(taskId);
-      _tasks.removeWhere((t) => t.id == taskId);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-}
 
   Future<bool> createTask(String title, String description, String priority) async {
     try {
@@ -175,19 +35,9 @@ class TaskProvider with ChangeNotifier {
         description: description,
         priority: priority,
       );
-      // Thêm task mới lên ĐẦU danh sách hiện tại
       _tasks.insert(0, newTask);
       notifyListeners();
       return true;
-      Future<bool> updateTask(String taskId, Map<String, dynamic> updateData) async {
-    try {
-      final updatedTask = await _taskService.updateTask(taskId, updateData);
-      final index = _tasks.indexWhere((t) => t.id == taskId);
-      if (index != -1) {
-        _tasks[index] = updatedTask;
-        notifyListeners();
-      }
-      return true;
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
       notifyListeners();
@@ -195,80 +45,6 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> deleteTask(String taskId) async {
-    try {
-      await _taskService.deleteTask(taskId);
-      _tasks.removeWhere((t) => t.id == taskId);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-} catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-      Future<bool> updateTask(String taskId, Map<String, dynamic> updateData) async {
-    try {
-      final updatedTask = await _taskService.updateTask(taskId, updateData);
-      final index = _tasks.indexWhere((t) => t.id == taskId);
-      if (index != -1) {
-        _tasks[index] = updatedTask;
-        notifyListeners();
-      }
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> deleteTask(String taskId) async {
-    try {
-      await _taskService.deleteTask(taskId);
-      _tasks.removeWhere((t) => t.id == taskId);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-}
-    Future<bool> updateTask(String taskId, Map<String, dynamic> updateData) async {
-    try {
-      final updatedTask = await _taskService.updateTask(taskId, updateData);
-      final index = _tasks.indexWhere((t) => t.id == taskId);
-      if (index != -1) {
-        _tasks[index] = updatedTask;
-        notifyListeners();
-      }
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> deleteTask(String taskId) async {
-    try {
-      await _taskService.deleteTask(taskId);
-      _tasks.removeWhere((t) => t.id == taskId);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
-    }
-  }
-}
   Future<bool> updateTask(String taskId, Map<String, dynamic> updateData) async {
     try {
       final updatedTask = await _taskService.updateTask(taskId, updateData);
