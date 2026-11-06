@@ -45,4 +45,26 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
   }
+
+  Future<void> forgotPassword(String email) async {
+    final response = await http.post(
+      Uri.parse('${Constants.baseUrl}/auth/forgot-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception(jsonDecode(response.body)['message'] ?? 'Lỗi gửi OTP');
+    }
+  }
+
+  Future<void> resetPassword(String email, String otp, String newPassword) async {
+    final response = await http.post(
+      Uri.parse('${Constants.baseUrl}/auth/reset-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'otp': otp, 'newPassword': newPassword}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception(jsonDecode(response.body)['message'] ?? 'Lỗi đổi mật khẩu');
+    }
+  }
 }

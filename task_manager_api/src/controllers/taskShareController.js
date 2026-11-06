@@ -1,20 +1,19 @@
 const TaskShare = require('../models/TaskShare');
 const User = require('../models/User');
+const Notification = require('../models/Notification'); // Thêm import
+const { sendEmail } = require('../services/emailService');
+const { getShareTaskTemplate } = require('../utils/emailTemplates');
 
 // @desc    Chia sẻ task cho người khác
-// @route   POST /api/tasks/:id/shares
-// @access  Private (Chỉ Editor mới được share)
 exports.shareTask = async (req, res) => {
   try {
-    const { userId, permission } = req.body; // permission = 'viewer' hoặc 'editor'
+    const { userId, permission } = req.body;
     
-    // Kiểm tra user có tồn tại không
     const userToShare = await User.findById(userId);
     if (!userToShare) {
       return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng này' });
     }
 
-    // Tạo bản ghi Share mới. Nhờ unique index trong Model, nếu share 2 lần nó sẽ báo lỗi văng vào catch
     const share = await TaskShare.create({
       taskId: req.task._id,
       userId: userId,
@@ -22,9 +21,24 @@ exports.shareTask = async (req, res) => {
       sharedBy: req.user._id
     });
 
+    // TRỌNG TÂM BUỔI 3: Gọi hàm gửi email chạy ngầm
+    sendEmail({
+      to: userToShare.email,
+      subject: '[Task Manager] Ai đó vừa chia sẻ công việc với bạn',
+      html: getShareTaskTemplate(req.task.title, req.user.fullName, share.permission)
+    });
+
+    // Tạo thông báo In-app chạy ngầm
+    Notification.create({
+      userId: userToShare._id,
+      taskId: req.task._id,
+      type: 'SHARE',
+      title: 'Được chia sẻ công việc',
+      message: `${req.user.fullName} vừa chia sẻ cho bạn công việc: ${req.task.title}`
+    });
+
     res.status(201).json({ success: true, message: 'Chia sẻ thành công', data: share });
   } catch (error) {
-    // 11000 là mã lỗi của MongoDB khi dính Unique trùng lặp
     if (error.code === 11000) {
       return res.status(400).json({ success: false, message: 'Người này đã được chia sẻ công việc rồi' });
     }

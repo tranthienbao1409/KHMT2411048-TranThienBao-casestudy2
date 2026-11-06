@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../tasks/task_list_screen.dart';
 import 'register_screen.dart'; 
+import 'forgot_password_screen.dart'; // Thêm màn hình quên pass
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -128,7 +129,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+                        );
+                      },
                       style: TextButton.styleFrom(
                         foregroundColor: _momoPink, // Chữ nút hồng
                       ),
