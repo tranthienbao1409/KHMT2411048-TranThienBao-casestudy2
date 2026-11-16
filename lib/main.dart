@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/task_provider.dart';
-import 'providers/notification_provider.dart'; // import mới
+import 'providers/notification_provider.dart';
 import 'screens/auth/login_screen.dart';
 
 void main() {
@@ -23,7 +23,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Khai báo bộ màu chuẩn Momo + Beige
     final Color momoPink = const Color(0xFFA50064);
     final Color beigeBackground = const Color(0xFFF9F6F0);
 
@@ -31,19 +30,21 @@ class MyApp extends StatelessWidget {
       title: 'Task Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: beigeBackground, // Nền mặc định cho mọi màn hình
+        scaffoldBackgroundColor: beigeBackground,
         colorScheme: ColorScheme.light(
-          primary: momoPink,      // Màu chủ đạo cho Appbar, Button...
-          secondary: momoPink,    // Màu phụ trợ (FloatingActionButton...)
+          primary: momoPink,
+          secondary: momoPink,
           background: beigeBackground,
         ),
+        // [UI ENGINEERING]: Đổi toàn bộ AppBar của app thành màu Hồng, chữ Trắng
         appBarTheme: AppBarTheme(
-          backgroundColor: beigeBackground,
+          backgroundColor: momoPink,
+          foregroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
-          iconTheme: IconThemeData(color: momoPink),
-          titleTextStyle: TextStyle(
-            color: momoPink, 
+          iconTheme: const IconThemeData(color: Colors.white),
+          titleTextStyle: const TextStyle(
+            color: Colors.white, 
             fontSize: 22, 
             fontWeight: FontWeight.bold
           ),

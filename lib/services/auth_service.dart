@@ -5,6 +5,15 @@ import '../models/user.dart';
 import '../utils/constants.dart';
 
 class AuthService {
+  Future<Map<String, String>> _getHeaders() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+  }
+
   Future<User?> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('${Constants.baseUrl}/auth/login'),
@@ -62,6 +71,35 @@ class AuthService {
       Uri.parse('${Constants.baseUrl}/auth/reset-password'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'otp': otp, 'newPassword': newPassword}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception(jsonDecode(response.body)['message'] ?? 'Lỗi đổi mật khẩu');
+    }
+  }
+
+  // [TÍNH NĂNG MỚI]: Cập nhật hồ sơ
+  Future<User> updateProfile(String fullName) async {
+    final headers = await _getHeaders();
+    final response = await http.put(
+      Uri.parse('${Constants.baseUrl}/auth/me'),
+      headers: headers,
+      body: jsonEncode({'fullName': fullName}),
+    );
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      return User.fromJson(data['data']);
+    } else {
+      throw Exception(data['message'] ?? 'Lỗi cập nhật hồ sơ');
+    }
+  }
+
+  // [TÍNH NĂNG MỚI]: Đổi mật khẩu
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    final headers = await _getHeaders();
+    final response = await http.put(
+      Uri.parse('${Constants.baseUrl}/auth/change-password'),
+      headers: headers,
+      body: jsonEncode({'currentPassword': currentPassword, 'newPassword': newPassword}),
     );
     if (response.statusCode != 200) {
       throw Exception(jsonDecode(response.body)['message'] ?? 'Lỗi đổi mật khẩu');

@@ -17,21 +17,11 @@ class AuthProvider with ChangeNotifier {
     _isLoading = true;
     _error = null;
     notifyListeners();
-
     try {
       _currentUser = await _authService.login(email, password);
       _isLoading = false;
       notifyListeners();
       return true;
-      Future<bool> forgotPassword(String email) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.forgotPassword(email);
-      _isLoading = false;
-      notifyListeners();
-      return true;
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
@@ -39,116 +29,16 @@ class AuthProvider with ChangeNotifier {
       return false;
     }
   }
-
-  Future<bool> resetPassword(String email, String otp, String newPassword) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.resetPassword(email, otp, newPassword);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-} catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-      Future<bool> forgotPassword(String email) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.forgotPassword(email);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> resetPassword(String email, String otp, String newPassword) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.resetPassword(email, otp, newPassword);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-}
-    Future<bool> forgotPassword(String email) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.forgotPassword(email);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> resetPassword(String email, String otp, String newPassword) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.resetPassword(email, otp, newPassword);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-}
 
   Future<bool> register(String fullName, String email, String password) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
-
     try {
       _currentUser = await _authService.register(fullName, email, password);
       _isLoading = false;
       notifyListeners();
       return true;
-      Future<bool> forgotPassword(String email) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.forgotPassword(email);
-      _isLoading = false;
-      notifyListeners();
-      return true;
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
@@ -156,135 +46,13 @@ class AuthProvider with ChangeNotifier {
       return false;
     }
   }
-
-  Future<bool> resetPassword(String email, String otp, String newPassword) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.resetPassword(email, otp, newPassword);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-} catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-      Future<bool> forgotPassword(String email) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.forgotPassword(email);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> resetPassword(String email, String otp, String newPassword) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.resetPassword(email, otp, newPassword);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-}
-    Future<bool> forgotPassword(String email) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.forgotPassword(email);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-
-  Future<bool> resetPassword(String email, String otp, String newPassword) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.resetPassword(email, otp, newPassword);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-}
 
   void logout() {
     _authService.logout();
     _currentUser = null;
     notifyListeners();
-    Future<bool> forgotPassword(String email) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.forgotPassword(email);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
   }
 
-  Future<bool> resetPassword(String email, String otp, String newPassword) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await _authService.resetPassword(email, otp, newPassword);
-      _isLoading = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
-      _isLoading = false;
-      notifyListeners();
-      return false;
-    }
-  }
-}
   Future<bool> forgotPassword(String email) async {
     _isLoading = true;
     _error = null;
@@ -308,6 +76,42 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     try {
       await _authService.resetPassword(email, otp, newPassword);
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString().replaceAll('Exception: ', '');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // [TÍNH NĂNG MỚI]: Cập nhật hồ sơ
+  Future<bool> updateProfile(String fullName) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      _currentUser = await _authService.updateProfile(fullName);
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString().replaceAll('Exception: ', '');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // [TÍNH NĂNG MỚI]: Đổi mật khẩu
+  Future<bool> changePassword(String currentPassword, String newPassword) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      await _authService.changePassword(currentPassword, newPassword);
       _isLoading = false;
       notifyListeners();
       return true;

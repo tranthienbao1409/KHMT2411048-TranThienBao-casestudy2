@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/task.dart';
+import 'package:intl/intl.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
@@ -9,10 +10,16 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // [UI ENGINEERING]: Tạo viền đỏ nếu trễ hạn
+    final isOverdue = task.isOverdue;
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: isOverdue ? const BorderSide(color: Colors.red, width: 1.5) : BorderSide.none,
+      ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
@@ -21,16 +28,17 @@ class TaskCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Tiêu đề và Độ ưu tiên
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Text(
                       task.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: isOverdue ? Colors.red.shade800 : Colors.black,
+                         
                       ),
                     ),
                   ),
@@ -40,7 +48,6 @@ class TaskCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               
-              // Mô tả ngắn
               if (task.description.isNotEmpty)
                 Text(
                   task.description,
@@ -50,15 +57,36 @@ class TaskCard extends StatelessWidget {
                 ),
               const SizedBox(height: 16),
               
-              // Trạng thái và Ngày tạo
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _buildStatusBadge(task.status),
-                  Text(
-                    '${task.createdAt.day}/${task.createdAt.month}/${task.createdAt.year}',
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
-                  ),
+                  
+                  // Hiển thị hạn chót và cảnh báo trễ hạn
+                  if (task.dueDate != null)
+                    Row(
+                      children: [
+                        Icon(
+                          isOverdue ? Icons.warning_amber_rounded : Icons.calendar_today,
+                          size: 14,
+                          color: isOverdue ? Colors.red : Colors.grey.shade500,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          DateFormat('dd/MM/yyyy').format(task.dueDate!),
+                          style: TextStyle(
+                            color: isOverdue ? Colors.red : Colors.grey.shade500, 
+                            fontSize: 12,
+                            fontWeight: isOverdue ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    Text(
+                      'Tạo: ${DateFormat('dd/MM/yyyy').format(task.createdAt)}',
+                      style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                    ),
                 ],
               )
             ],

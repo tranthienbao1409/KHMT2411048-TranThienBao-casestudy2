@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/task_provider.dart';
-import '../../providers/notification_provider.dart'; // Import provider thông báo
+import '../../providers/notification_provider.dart';
 import '../../widgets/task_card.dart';
 import '../profile/profile_screen.dart';
-import '../notifications/notification_screen.dart'; // Import màn hình thông báo
-import 'task_detail_screen.dart'; 
+import '../notifications/notification_screen.dart';
+import 'task_detail_screen.dart';
+import 'package:intl/intl.dart';
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
@@ -15,21 +16,18 @@ class TaskListScreen extends StatefulWidget {
 }
 
 class _TaskListScreenState extends State<TaskListScreen> {
-  // State cho thanh Search & Lọc
   String _searchQuery = '';
-  String _selectedFilter = 'all'; // all, todo, in_progress, completed
+  String _selectedFilter = 'all';
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TaskProvider>(context, listen: false).loadTasks();
-      // Load đếm số thông báo chưa đọc
       Provider.of<NotificationProvider>(context, listen: false).fetchUnreadCount();
     });
   }
 
-  // Hàm tạo Chip Filter nhỏ nhỏ xinh xinh
   Widget _buildFilterChip(String label, String filterValue) {
     final isSelected = _selectedFilter == filterValue;
     final primaryColor = Theme.of(context).colorScheme.primary;
@@ -51,16 +49,17 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  // [THÊM MỚI] Hàm hiển thị Hộp thoại Tạo công việc
   void _showCreateTaskDialog(BuildContext context) {
     final titleController = TextEditingController();
     final descController = TextEditingController();
     String selectedPriority = 'medium';
+    DateTime? startDate;
+    DateTime? dueDate;
     final formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
-      builder: (ctx) => StatefulBuilder( // Dùng StatefulBuilder để thay đổi trạng thái Dropdown trong Dialog
+      builder: (ctx) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
             title: const Text('Thêm công việc mới'),
@@ -79,7 +78,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                     TextFormField(
                       controller: descController,
                       decoration: const InputDecoration(labelText: 'Mô tả chi tiết'),
-                      maxLines: 3,
+                      maxLines: 2,
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
@@ -91,6 +90,35 @@ class _TaskListScreenState extends State<TaskListScreen> {
                         DropdownMenuItem(value: 'high', child: Text('Cao (Màu đỏ)')),
                       ],
                       onChanged: (val) => setState(() => selectedPriority = val!),
+                    ),
+                    const SizedBox(height: 16),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(startDate == null ? 'Chọn ngày bắt đầu' : 'Bắt đầu: ${DateFormat('dd/MM/yyyy').format(startDate!)}'),
+                      trailing: const Icon(Icons.calendar_today),
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) setState(() => startDate = picked);
+                      },
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(dueDate == null ? 'Chọn hạn hoàn thành' : 'Hạn chót: ${DateFormat('dd/MM/yyyy').format(dueDate!)}'),
+                      trailing: const Icon(Icons.event_available, color: Colors.red),
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: startDate ?? DateTime.now(),
+                          firstDate: startDate ?? DateTime.now(),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) setState(() => dueDate = picked);
+                      },
                     ),
                   ],
                 ),
@@ -109,11 +137,13 @@ class _TaskListScreenState extends State<TaskListScreen> {
                       titleController.text,
                       descController.text,
                       selectedPriority,
+                      startDate,
+                      dueDate,
                     );
                     
                     if (success) {
                       if (!mounted) return;
-                      Navigator.pop(ctx); // Đóng hộp thoại
+                      Navigator.pop(ctx);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Tạo công việc thành công!')),
                       );
@@ -136,11 +166,13 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Công việc của tôi'),
+        // AppBar giờ đã màu Hồng trắng nhờ Theme main.dart
         actions: [
-          // Cái chuông thông báo
           Consumer<NotificationProvider>(
             builder: (context, notif, child) {
               return Stack(
@@ -153,7 +185,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
                         context,
                         MaterialPageRoute(builder: (context) => const NotificationScreen()),
                       ).then((_) {
-                        // Khi từ màn hình thông báo quay lại, update lại số đếm chuông
                         notif.fetchUnreadCount();
                       });
                     },
@@ -212,7 +243,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
             );
           }
 
-          // [THÊM MỚI] Logic Tìm kiếm (Search) & Lọc (Filter) bằng code Dart 
           var filteredTasks = taskProvider.tasks;
           
           if (_searchQuery.isNotEmpty) {
@@ -228,24 +258,32 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
           return Column(
             children: [
-              // Thanh Search Bar
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              // [UI ENGINEERING]: Bọc thanh Search trong một khối nền Hồng bo tròn góc dưới giống Profile
+              Container(
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(32),
+                    bottomRight: Radius.circular(32),
+                  ),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Tìm kiếm công việc...',
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
                     filled: true,
                     fillColor: Colors.white,
                     contentPadding: const EdgeInsets.all(0),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(30), // Bo tròn tít thò lò
                       borderSide: BorderSide.none,
                     ),
                   ),
                   onChanged: (val) => setState(() => _searchQuery = val),
                 ),
               ),
+              const SizedBox(height: 16),
 
               // Dải Chip để Lọc (Filter)
               SingleChildScrollView(
@@ -265,7 +303,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Danh sách
               Expanded(
                 child: filteredTasks.isEmpty
                   ? Center(
@@ -291,7 +328,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => TaskDetailScreen(task: task)),
-                              );
+                              ).then((_) => taskProvider.loadTasks());
                             },
                           );
                         },

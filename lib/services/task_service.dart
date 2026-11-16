@@ -34,6 +34,8 @@ class TaskService {
     required String title,
     required String description,
     required String priority,
+    DateTime? startDate,
+    DateTime? dueDate,
   }) async {
     final headers = await _getHeaders();
     final response = await http.post(
@@ -44,6 +46,8 @@ class TaskService {
         'description': description,
         'priority': priority,
         'status': 'todo',
+        if (startDate != null) 'startDate': startDate.toIso8601String(),
+        if (dueDate != null) 'dueDate': dueDate.toIso8601String(),
       }),
     );
 

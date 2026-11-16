@@ -28,12 +28,14 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> createTask(String title, String description, String priority) async {
+  Future<bool> createTask(String title, String description, String priority, DateTime? startDate, DateTime? dueDate) async {
     try {
       final newTask = await _taskService.createTask(
         title: title,
         description: description,
         priority: priority,
+        startDate: startDate,
+        dueDate: dueDate,
       );
       _tasks.insert(0, newTask);
       notifyListeners();

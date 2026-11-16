@@ -5,6 +5,8 @@ class Task {
   final String status;
   final String priority;
   final DateTime createdAt;
+  final DateTime? startDate;
+  final DateTime? dueDate;
 
   Task({
     required this.id,
@@ -13,6 +15,8 @@ class Task {
     required this.status,
     required this.priority,
     required this.createdAt,
+    this.startDate,
+    this.dueDate,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -25,6 +29,14 @@ class Task {
       createdAt: json['createdAt'] != null 
           ? DateTime.parse(json['createdAt']) 
           : DateTime.now(),
+      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
+      dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
     );
+  }
+
+  // [CODE QUALITY]: Viết sẵn hàm check trễ hạn để UI gọi cho gọn
+  bool get isOverdue {
+    if (dueDate == null || status == 'completed') return false;
+    return DateTime.now().isAfter(dueDate!);
   }
 }

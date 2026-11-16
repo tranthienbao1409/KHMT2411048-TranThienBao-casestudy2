@@ -70,7 +70,6 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Mã OTP không hợp lệ hoặc đã hết hạn' });
     }
 
-    // [KIỂM TRA BẢO MẬT]: Mật khẩu mới không được trùng mật khẩu cũ
     const isSamePassword = await bcrypt.compare(newPassword, user.passwordHash);
     if (isSamePassword) {
       return res.status(400).json({ success: false, message: 'Mật khẩu mới không được trùng với mật khẩu hiện tại' });
@@ -80,6 +79,41 @@ exports.resetPassword = async (req, res) => {
     user.resetPasswordOtp = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
+
+    res.status(200).json({ success: true, message: 'Đổi mật khẩu thành công' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi đổi mật khẩu' });
+  }
+};
+
+// [TÍNH NĂNG MỚI]: Cập nhật hồ sơ
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { fullName: req.body.fullName },
+      { new: true, runValidators: true } // new: true để trả về data mới nhất
+    );
+    res.status(200).json({ success: true, message: 'Cập nhật thành công', data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi cập nhật hồ sơ' });
+  }
+};
+
+// [TÍNH NĂNG MỚI]: Đổi mật khẩu trong app
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user._id);
+
+    // Kiểm tra mật khẩu cũ có đúng không
+    if (!(await user.matchPassword(currentPassword))) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu hiện tại không đúng' });
+    }
+
+    // Đổi mật khẩu mới
+    user.passwordHash = newPassword;
+    await user.save(); // pre-save hook sẽ tự động băm mật khẩu
 
     res.status(200).json({ success: true, message: 'Đổi mật khẩu thành công' });
   } catch (error) {
